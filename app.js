@@ -1,11 +1,21 @@
 const readline = require("readline");
+const fs = require("fs");
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
+// Load data from file
 let employees = [];
+if (fs.existsSync("data.json")) {
+  employees = JSON.parse(fs.readFileSync("data.json"));
+}
+
+// Save function
+function saveData() {
+  fs.writeFileSync("data.json", JSON.stringify(employees, null, 2));
+}
 
 function showMenu() {
   console.log("\nEmployee Management System");
@@ -51,6 +61,7 @@ function addEmployee() {
           salary: Number(salary)
         };
         employees.push(emp);
+        saveData(); // ✅ SAVE
         console.log("Employee added successfully!");
         showMenu();
       });
@@ -79,6 +90,7 @@ function updateEmployee() {
 
     rl.question("New Name: ", (name) => {
       emp.name = name || emp.name;
+      saveData(); // ✅ SAVE
       console.log("Updated!");
       showMenu();
     });
@@ -88,6 +100,7 @@ function updateEmployee() {
 function deleteEmployee() {
   rl.question("Enter ID to delete: ", (id) => {
     employees = employees.filter(e => e.id != id);
+    saveData(); // ✅ SAVE
     console.log("Deleted!");
     showMenu();
   });
